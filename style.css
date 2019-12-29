@@ -1,3 +1,10 @@
 body, html {
     font-family: 'Raleway', sans-serif;
 }
+
+#current-conditions {
+    border-style: dotted;
+    border-color: gray;
+    border-width: 1px;
+    border-radius: 5px;
+}

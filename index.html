@@ -10,14 +10,11 @@
       integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
     <link
       href="https://fonts.googleapis.com/css?family=Raleway&display=swap"
       rel="stylesheet"
     />
-    <script
-    src="https://code.jquery.com/jquery-3.4.1.min.js"
-    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-    crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="style.css" />
     <title>Weather Dashboard</title>
@@ -38,25 +35,43 @@
                 id="city-input"
                 placeholder="City"
               />
-              <button type="button" class="btn btn-primary" id="search-btn">Search</button>
+              <button type="button" class="btn btn-primary" id="search-btn"><i class="fa fa-search"></i> Search</button>
             </div>
           </form>
-          <!-- cities list will append here -->
-          <div id="cities-list">list of cities</div>
+          <!-- search history will append here -->
+          <div id="cities-list">list of cities search history</div>
         </div>
         <!-- daily forecast for city -->
         <div class="col-md-8" id="current-conditions">
-          <h2>Current Conditions:</h2>
+            <br>
+              <div class="city-name"></div>
+              <div class="icon-image"></div>
+              <br>
+              <div class="temp"></div>
+              <br>
+              <div class="humidity"></div>
+              <br>
+              <div class="wind-speed"></div>
+              <br>
+              <div class="uv-index"></div>
+          </div>
         </div>
       </div>
       <div class="row">
         <div class="col-md-4"></div>
-        <div class="col-md-8" id="5-day-forecast">
+        <div class="col-md-8">
+        <!-- 5 day forecast -->
           <h2>5 Day Forecast:</h2>
+          <div id="5-day-forecast"></div>
         </div>
       </div>
     </div>
-  </body>
 
-  <script src="script.js"></script>
+    <script
+    src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="script.js"></script>
+  </body>
 </html>
