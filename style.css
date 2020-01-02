@@ -8,3 +8,18 @@ body, html {
     border-width: 1px;
     border-radius: 5px;
 }
+
+.low {
+    background-color: lime;
+    color: white;
+}
+
+.medium {
+    background-color: yellow;
+    color: black;
+}
+
+.high {
+    background-color: red;
+    color: white;
+}

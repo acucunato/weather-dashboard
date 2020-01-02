@@ -34,8 +34,11 @@
                 class="form-control"
                 id="city-input"
                 placeholder="City"
-              />
-              <button type="button" class="btn btn-primary" id="search-btn"><i class="fa fa-search"></i> Search</button>
+              /><br>
+              <button type="button" class="btn btn-light" id="search-btn"><i class="fa fa-search"></i> Search</button>
+              <button class="btn btn-light" id="clear-all">
+                <i class="fa fa-trash"></i> Clear Results</button>
+
             </div>
           </form>
           <!-- search history will append here -->
@@ -43,6 +46,7 @@
         </div>
         <!-- daily forecast for city -->
         <div class="col-md-8" id="current-conditions">
+            <h2>Current Conditions:</h2>
             <br>
               <div class="city-name"></div>
               <div class="icon-image"></div>
@@ -62,7 +66,7 @@
         <div class="col-md-8">
         <!-- 5 day forecast -->
           <h2>5 Day Forecast:</h2>
-          <div id="5-day-forecast"></div>
+            <div id="5-day-forecast">
         </div>
       </div>
     </div>
