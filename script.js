@@ -1,18 +1,18 @@
 $(document).ready(function() {
   var apiKey = "fbf3f488e92dd780ee0ce2263cc539b5";
-  var cityArr = [];
+  var cityArr = [ ];
 
-    getData();
 
   $("#search-btn").on("click", function(event) {
     event.preventDefault();
-    clear()
+    clear();
 
     var city = $("#city-input").val();
     currentConditions(city);
     fiveDayForecast(city);
+    getData();
 
-    cityArr.push(city)
+    cityArr.push(city);
 
     localStorage.setItem("city", cityArr);
   });
@@ -85,17 +85,31 @@ $(document).ready(function() {
       method: "GET"
     }).then(function(response) {
       var uv = response.value;
-      $(".uv-index").html("UV Index: " + '<span class="uv-index-number">' + uv + '</span>');
+      $(".uv-index").html(
+        "UV Index: " + '<span class="uv-index-number">' + uv + "</span>"
+      );
 
       // create if statement to color uv
 
-        if (uv < 4) {
-          $(".uv-index-number").css({ "background-color": "lime", color: "white", "padding": "3px" });
-        } else if (uv >= 5 && uv <= 7) {
-           $(".uv-index-number").css({ "background-color": "yellow", color: "black" });
-        } else {
-            $(".uv-index-number").css({ "background-color": "red", color: "white" });
-        }
+      if (uv < 4) {
+        $(".uv-index-number").css({
+          "background-color": "lime",
+          color: "white",
+          padding: "3px"
+        });
+      } else if (uv >= 5 && uv <= 7) {
+        $(".uv-index-number").css({
+          "background-color": "yellow",
+          color: "black",
+          padding: "3px"
+        });
+      } else {
+        $(".uv-index-number").css({
+          "background-color": "red",
+          color: "white",
+          padding: "3px"
+        });
+      }
     });
   }
 
@@ -111,26 +125,24 @@ $(document).ready(function() {
       url: queryURL,
       method: "GET"
     }).then(function(response) {
-
       for (var i = 0; i < response.list.length; i += 8) {
-
         var date = response.list[i].dt_txt;
-
         var formatDate = new Date(date);
-
         var temp = (response.list[i].main.temp - 273.15) * 1.8 + 32;
         var humidity = response.list[i].main.humidity;
-
         var icon = response.list[i].weather[0].icon;
-
-        var fiveDayIconURL = "http://openweathermap.org/img/wn/" + icon + "@2x.png"
-
-        var newCard = $('<div class="card bg-light mb-3" style="max-width: 18rem;">').html(
-            '<div class="card-body">' +
+        var fiveDayIconURL =
+          "http://openweathermap.org/img/wn/" + icon + "@2x.png";
+        var newCard = $(
+          '<div class="card bg-light mb-3" style="max-width: 18rem;">'
+        ).html(
+          '<div class="card-body">' +
             '<h5 class="card-title" id="date">' +
             formatDate.toDateString() +
             "</h5>" +
-            '<img src="' + fiveDayIconURL + '"/>' + 
+            '<img src="' +
+            fiveDayIconURL +
+            '"/>' +
             '<div class="card-text" id="temp-humidity">' +
             "Temperature: " +
             temp.toFixed(1) +
@@ -140,11 +152,11 @@ $(document).ready(function() {
             humidity +
             "%" +
             "</div>" +
-            "</div>" + "</div>"
+            "</div>" +
+            "</div>"
         );
 
-        $("#5-day-forecast").append(newCard)
-
+        $("#5-day-forecast").append(newCard);
       }
     });
   }
@@ -156,20 +168,21 @@ $(document).ready(function() {
 
   $("#clear-all").on("click", clear);
 
-  // local storage for search history/cities list
-  // create buttons to click and append to city list
+  function getData() {
+    var searchHistory = localStorage.getItem("city");
+    //loop through search history array, append each element in array as a button
 
+    // $("#cities-list").empty();
 
-    function getData() {
-      var searchHistory = localStorage.getItem("city");
+    for (var i = 0; i < searchHistory.length; i++) {
 
-
-      //loop through search history array, append each element in array as a button
-    //   var b = $("<button>");
-    //   b.addClass("btn btn-light");
-    //   b.text(cityHistory);
-
-      $("#cities-list").append(searchHistory)
+      var b = $("<button>");
+      b.addClass("btn btn-light city-btn");
+      b.attr("data-name", searchHistory[i]);
+      b.text(searchHistory[i]);
+      $("#cities-list").append(searchHistory[i]);
     }
+  }
 
+  $(document).on("click", ".city-btn", currentConditions, fiveDayForecast);
 });
