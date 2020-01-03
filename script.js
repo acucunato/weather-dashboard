@@ -1,17 +1,20 @@
 $(document).ready(function() {
   var apiKey = "fbf3f488e92dd780ee0ce2263cc539b5";
+  var cityArr = [];
 
     getData();
 
   $("#search-btn").on("click", function(event) {
     event.preventDefault();
-    // clear();
+    clear()
 
     var city = $("#city-input").val();
     currentConditions(city);
     fiveDayForecast(city);
 
-    localStorage.setItem("city", city);
+    cityArr.push(city)
+
+    localStorage.setItem("city", cityArr);
   });
 
   // make ajax call for current conditions
@@ -82,19 +85,17 @@ $(document).ready(function() {
       method: "GET"
     }).then(function(response) {
       var uv = response.value;
-      $(".uv-index").text("UV Index: " + uv);
+      $(".uv-index").html("UV Index: " + '<span class="uv-index-number">' + uv + '</span>');
+
       // create if statement to color uv
 
-      //   if (uv < 4) {
-      //     $(uv).css({ "background-color": "lime", color: "white" });
-      //   } else if (uv >= 5 && uv <= 7) {
-      //     $(uv).removeClass("low");
-      //     $(uv).addClass("medium");
-      //   } else {
-      //     $(uv).removeClass("low");
-      //     $(uv).removeClass("medium");
-      //     $(uv).addClass("high");
-      //   }
+        if (uv < 4) {
+          $(".uv-index-number").css({ "background-color": "lime", color: "white", "padding": "3px" });
+        } else if (uv >= 5 && uv <= 7) {
+           $(".uv-index-number").css({ "background-color": "yellow", color: "black" });
+        } else {
+            $(".uv-index-number").css({ "background-color": "red", color: "white" });
+        }
     });
   }
 
@@ -110,24 +111,26 @@ $(document).ready(function() {
       url: queryURL,
       method: "GET"
     }).then(function(response) {
-      console.log(response);
 
       for (var i = 0; i < response.list.length; i += 8) {
 
         var date = response.list[i].dt_txt;
-        //format date
+
+        var formatDate = new Date(date);
+
         var temp = (response.list[i].main.temp - 273.15) * 1.8 + 32;
         var humidity = response.list[i].main.humidity;
 
+        var icon = response.list[i].weather[0].icon;
 
-        $("#5-day-forecast").html(
-          '<div class= "card-deck">' +
-            '<div class="card bg-light mb-3" style="max-width: 18rem;">' +
+        var fiveDayIconURL = "http://openweathermap.org/img/wn/" + icon + "@2x.png"
+
+        var newCard = $('<div class="card bg-light mb-3" style="max-width: 18rem;">').html(
             '<div class="card-body">' +
             '<h5 class="card-title" id="date">' +
-            date +
+            formatDate.toDateString() +
             "</h5>" +
-            '<div class="icon"></div>' +
+            '<img src="' + fiveDayIconURL + '"/>' + 
             '<div class="card-text" id="temp-humidity">' +
             "Temperature: " +
             temp.toFixed(1) +
@@ -137,49 +140,36 @@ $(document).ready(function() {
             humidity +
             "%" +
             "</div>" +
-            "</div></div></div>"
+            "</div>" + "</div>"
         );
 
-        var icon = response.list[i].weather[0].icon;
+        $("#5-day-forecast").append(newCard)
 
-        var fivedayicon = $("<img>");
-        $(".icon").append(
-          fivedayicon.attr(
-            "src",
-            "http://openweathermap.org/img/wn/" + icon + "@2x.png"
-          )
-        );
-
-        // $("#date").append(date);
-
-        // var temp = (response.list[i].main.temp - 273.15) * 1.8 + 32;
-        // $("#temp-humidity").append("Temperature: " + temp.toFixed(1) + "°F")
-
-        // var humidity = response.list[i].main.humidity;
-        // $("#temp-humidity").append("Humidity: " + humidity + "%")
       }
     });
   }
 
   function clear() {
-    $("#current-conditions").empty();
+    $(".icon-image").empty();
     $("#5-day-forecast").empty();
   }
 
   $("#clear-all").on("click", clear);
 
   // local storage for search history/cities list
+  // create buttons to click and append to city list
+
 
     function getData() {
       var searchHistory = localStorage.getItem("city");
-      var b = $("<button>");
-      b.
 
-      $("#cities-list")
+
+      //loop through search history array, append each element in array as a button
+    //   var b = $("<button>");
+    //   b.addClass("btn btn-light");
+    //   b.text(cityHistory);
+
+      $("#cities-list").append(searchHistory)
     }
 
-  // ajax call for 5 day forecast
-
-  // 5 day forecast
-  // search history
 });

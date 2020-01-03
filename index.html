@@ -42,7 +42,7 @@
             </div>
           </form>
           <!-- search history will append here -->
-          <div id="cities-list">list of cities search history</div>
+          <div id="cities-list"></div>
         </div>
         <!-- daily forecast for city -->
         <div class="col-md-8" id="current-conditions">
@@ -60,17 +60,18 @@
               <div class="uv-index"></div>
           </div>
         </div>
-      </div>
+      
       <div class="row">
         <div class="col-md-4"></div>
         <div class="col-md-8">
         <!-- 5 day forecast -->
           <h2>5 Day Forecast:</h2>
-            <div id="5-day-forecast">
-        </div>
+          <div class="card-deck d-flex flex-row justify-content-start">
+            <div id="5-day-forecast"></div>
+            </div>
       </div>
     </div>
-
+</div>
     <script
     src="https://code.jquery.com/jquery-3.4.1.min.js"
     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
