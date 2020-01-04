@@ -1,6 +1,6 @@
 $(document).ready(function() {
   var apiKey = "fbf3f488e92dd780ee0ce2263cc539b5";
-  var cityArr = [ ];
+  var cityArr = [];
 
 
   $("#search-btn").on("click", function(event) {
