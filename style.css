@@ -9,3 +9,20 @@ body, html {
     border-radius: 5px;
 }
 
+#five-day-forecast {
+    display: flex;
+    overflow: hidden;
+    justify-content: center;
+}
+
+.forecast {
+    overflow-x: scroll;
+}
+
+#error-message {
+    color: red;
+}
+
+.city-btn {
+    text-transform: capitalize;
+}

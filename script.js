@@ -1,26 +1,54 @@
 $(document).ready(function() {
+
   var apiKey = "fbf3f488e92dd780ee0ce2263cc539b5";
   var cityArr = [];
 
+  getSearchHistory();
+
 
   $("#search-btn").on("click", function(event) {
+
     event.preventDefault();
-    clear();
 
-    var city = $("#city-input").val();
-    currentConditions(city);
-    fiveDayForecast(city);
-    getData();
+    var searchedCity = $("#city-input").val();
 
-    cityArr.push(city);
+    // checks to make sure city is valid
+    if (!searchedCity) {
+      return null;
+    }
 
-    localStorage.setItem("city", cityArr);
+
+    //get data for current conditions first, then append and grab all other functions
+    getCurrentConditions(searchedCity)
+    .then(function(currentConditions) {
+
+      clear();
+      appendCurrentConditions(currentConditions);
+    })
+    .then(function() {
+
+      saveCityToSearchHistory(searchedCity);
+      getSearchHistory();
+    })
+    .then(function() {
+
+      getFiveDayForecast(searchedCity)
+      .then(function(forecast) {
+
+        appendFiveDayForecast(forecast);
+      });
+    })
+
+    //must be a valid city
+    .catch(function() {
+
+      return $("#error-message").text("Sorry, that city could not be found. Please enter a valid city.");
+    });
+
   });
 
   // make ajax call for current conditions
-
-  function currentConditions(city) {
-    var city = $("#city-input").val();
+  function getCurrentConditions(city) {
 
     var queryURL =
       "https://api.openweathermap.org/data/2.5/weather?q=" +
@@ -28,14 +56,20 @@ $(document).ready(function() {
       "&APPID=" +
       apiKey;
 
-    $.ajax({
+    return $.ajax({
       url: queryURL,
       method: "GET"
-    }).then(function(response) {
+    });
+
+  }
+
+  function appendCurrentConditions(currentConditions) {
+
+      // Append response data
       // city name & date
       $(".city-name").html(
         "<h2>" +
-          response.name +
+          currentConditions.name +
           " " +
           "(" +
           moment().format("L") +
@@ -49,25 +83,25 @@ $(document).ready(function() {
         iconImg.attr(
           "src",
           "http://openweathermap.org/img/wn/" +
-            response.weather[0].icon +
+            currentConditions.weather[0].icon +
             "@2x.png"
         )
       );
 
       //temp
-      var tempF = (response.main.temp - 273.15) * 1.8 + 32;
+      var tempF = (currentConditions.main.temp - 273.15) * 1.8 + 32;
       $(".temp").text("Temperature: " + tempF.toFixed(1) + "°F");
       //humidity
-      $(".humidity").text("Humidity: " + response.main.humidity + "%");
+      $(".humidity").text("Humidity: " + currentConditions.main.humidity + "%");
       //wind speed
-      $(".wind-speed").text("Windspeed: " + response.wind.speed + " MPH");
+      $(".wind-speed").text("Windspeed: " + currentConditions.wind.speed + " MPH");
 
       //uv index
-      var lon = response.coord.lon;
-      var lat = response.coord.lat;
+      var lon = currentConditions.coord.lon;
+      var lat = currentConditions.coord.lat;
 
+      // Set UV index
       uvIndex(lat, lon);
-    });
   }
 
   // uv index
@@ -113,32 +147,37 @@ $(document).ready(function() {
     });
   }
 
-  function fiveDayForecast(city) {
-    var city = $("#city-input").val();
+  //ajax 5 day call 
+  function getFiveDayForecast(city) {
+
     var queryURL =
       "http://api.openweathermap.org/data/2.5/forecast?q=" +
       city +
       "&APPID=" +
       apiKey;
 
-    $.ajax({
+    return $.ajax({
       url: queryURL,
       method: "GET"
-    }).then(function(response) {
-      for (var i = 0; i < response.list.length; i += 8) {
-        var date = response.list[i].dt_txt;
-        var formatDate = new Date(date);
-        var temp = (response.list[i].main.temp - 273.15) * 1.8 + 32;
-        var humidity = response.list[i].main.humidity;
-        var icon = response.list[i].weather[0].icon;
+    });
+  }
+
+  // append ajax call 5 day
+  function appendFiveDayForecast(forecast) {
+      for (var i = 0; i < forecast.list.length; i += 8) {
+        var date = forecast.list[i].dt_txt;
+        var formatDate = moment(date).format("L");
+        var temp = (forecast.list[i].main.temp - 273.15) * 1.8 + 32;
+        var humidity = forecast.list[i].main.humidity;
+        var icon = forecast.list[i].weather[0].icon;
         var fiveDayIconURL =
           "http://openweathermap.org/img/wn/" + icon + "@2x.png";
         var newCard = $(
-          '<div class="card bg-light mb-3" style="max-width: 18rem;">'
+          '<div class="card bg-light ml-0 mb-3 mr-3" style="min-width: 200px;">'
         ).html(
           '<div class="card-body">' +
             '<h5 class="card-title" id="date">' +
-            formatDate.toDateString() +
+            formatDate +
             "</h5>" +
             '<img src="' +
             fiveDayIconURL +
@@ -158,31 +197,86 @@ $(document).ready(function() {
 
         $("#5-day-forecast").append(newCard);
       }
-    });
   }
+
 
   function clear() {
     $(".icon-image").empty();
     $("#5-day-forecast").empty();
+    $("#city-input").val("");
+    $("#error-message").empty();
   }
 
   $("#clear-all").on("click", clear);
 
-  function getData() {
-    var searchHistory = localStorage.getItem("city");
-    //loop through search history array, append each element in array as a button
+  // Saves a city into local storage
+  function saveCityToSearchHistory(city) {
 
-    // $("#cities-list").empty();
+      cityArr.push(city.toLowerCase());
 
+
+      localStorage.setItem("city", JSON.stringify(cityArr));
+  }
+
+  // get data from local storage, create buttons
+  function getSearchHistory() {
+
+    var searchHistory = JSON.parse(localStorage.getItem("city"));
+
+    if (!searchHistory) {
+      return null;
+    }
+
+    //most updated array from local storage
+    cityArr = searchHistory;
+
+    $("#cities-list").empty();
+
+
+    //create buttons for citites
     for (var i = 0; i < searchHistory.length; i++) {
+      var cityButton = $("<button>");
+      cityButton.addClass("btn btn-light city-btn m-2 d-block");
+      cityButton.attr("data-name", searchHistory[i]);
+      cityButton.text(searchHistory[i]); 
 
-      var b = $("<button>");
-      b.addClass("btn btn-light city-btn");
-      b.attr("data-name", searchHistory[i]);
-      b.text(searchHistory[i]);
-      $("#cities-list").append(searchHistory[i]);
+
+      $("#cities-list").append(cityButton); 
     }
   }
 
-  $(document).on("click", ".city-btn", currentConditions, fiveDayForecast);
+
+  // when city from local storage is clicked
+
+  $(document).on("click", ".city-btn", function(event) {
+
+    event.preventDefault();
+
+    clear();
+
+    var clickedCity = $(this).attr('data-name');
+
+
+
+    // get conditions then append and get 5 day
+    getCurrentConditions(clickedCity)
+    .then(function(currentConditions) {
+      appendCurrentConditions(currentConditions);
+    })
+    .then(function() {
+
+      getFiveDayForecast(clickedCity)
+      .then(function(forecast) {
+        appendFiveDayForecast(forecast);
+      });
+    })
+
+    //if api fails will append
+    .catch(function() {
+
+      return $("#error-message").text("An error occurred. Please try again.");
+    });
+
+  });
+
 });
