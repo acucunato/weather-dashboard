@@ -82,7 +82,7 @@ $(document).ready(function() {
       $(".icon-image").append(
         iconImg.attr(
           "src",
-          "http://openweathermap.org/img/wn/" +
+          "https://openweathermap.org/img/wn/" +
             currentConditions.weather[0].icon +
             "@2x.png"
         )
@@ -107,7 +107,7 @@ $(document).ready(function() {
   // uv index
   function uvIndex(lat, lon) {
     var queryURL =
-      "http://api.openweathermap.org/data/2.5/uvi?appid=" +
+      "https://api.openweathermap.org/data/2.5/uvi?appid=" +
       apiKey +
       "&lat=" +
       lat +
@@ -151,7 +151,7 @@ $(document).ready(function() {
   function getFiveDayForecast(city) {
 
     var queryURL =
-      "http://api.openweathermap.org/data/2.5/forecast?q=" +
+      "https://api.openweathermap.org/data/2.5/forecast?q=" +
       city +
       "&APPID=" +
       apiKey;
@@ -171,7 +171,7 @@ $(document).ready(function() {
         var humidity = forecast.list[i].main.humidity;
         var icon = forecast.list[i].weather[0].icon;
         var fiveDayIconURL =
-          "http://openweathermap.org/img/wn/" + icon + "@2x.png";
+          "https://openweathermap.org/img/wn/" + icon + "@2x.png";
         var newCard = $(
           '<div class="card bg-light ml-0 mb-3 mr-3" style="min-width: 200px;">'
         ).html(
