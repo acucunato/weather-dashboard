@@ -1,4 +1,4 @@
-# Work Day Scheduler
+# Weather Dashboard
 Created during Week 6 of UPenn Coding Bootcamp.
 
 ## Overview

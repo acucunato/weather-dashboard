@@ -167,7 +167,7 @@ $(document).ready(function() {
       for (var i = 0; i < forecast.list.length; i += 8) {
         var date = forecast.list[i].dt_txt;
         var formatDate = moment(date).format("L");
-        var temp = (forecast.list[i].main.temp - 273.15) * 1.8 + 32;
+        var temp = (forecast.list[i].main.temp_max - 273.15) * 1.8 + 32;
         var humidity = forecast.list[i].main.humidity;
         var icon = forecast.list[i].weather[0].icon;
         var fiveDayIconURL =
@@ -184,7 +184,7 @@ $(document).ready(function() {
             '"/>' +
             '<div class="card-text" id="temp-humidity">' +
             "Temperature: " +
-            temp.toFixed(1) +
+            temp.toFixed(2) +
             "°F" +
             "<br>" +
             "Humidity: " +
